@@ -9,8 +9,13 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
-  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:steganogram.helloWorld",
+    "onCommand:steganogram.injectSignatures",
+    "onCommand:steganogram.decryptLogs",
+    "onCommand:steganogram.hashAll"
+  ],
+  "main": "/extension.js",
   "contributes": {
     "commands": [
       {
@@ -22,8 +27,20 @@
         "title": "Hide .env"
       },
       {
-        "command": "stegashield.helloWorld",
-        "title": "Hello World"
+        "command": "extension.helloWorld",
+        "title": "steganogram: Hello World"
+      },
+      {
+        "command": "steganogram.injectSignatures",
+        "title": "steganogram: Inject Signatures"
+      },
+      {
+        "command": "steganogram.decryptLogs",
+        "title": "steganogram: Decrypt Logs"
+      },
+      {
+        "command": "steganogram.hashAll",
+        "title": "steganogram: Hash All Files"
       }
     ]
   },
