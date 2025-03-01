@@ -9,13 +9,32 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
-  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:steganogram.helloWorld",
+    "onCommand:steganogram.injectSignatures",
+    "onCommand:steganogram.decryptLogs",
+    "onCommand:steganogram.hashAll"
+  ],
+  "main": "./src/extension.js",
   "contributes": {
-    "commands": [{
-      "command": "stegashield.helloWorld",
-      "title": "Hello World"
-    }]
+    "commands": [
+      {
+        "command": "steganogram.helloWorld",
+        "title": "steganogram: Hello World"
+      },
+      {
+        "command": "steganogram.injectSignatures",
+        "title": "steganogram: Inject Signatures"
+      },
+      {
+        "command": "steganogram.decryptLogs",
+        "title": "steganogram: Decrypt Logs"
+      },
+      {
+        "command": "steganogram.hashAll",
+        "title": "steganogram: Hash All Files"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
