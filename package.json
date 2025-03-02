@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:steganogram.hashAll"
+    "*"
   ],
   "main": "/extension.js",
   "contributes": {
@@ -26,6 +26,28 @@
       {
         "command": "steganogram.hashAll",
         "title": "steganogram: Hash All Files"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.handleCopyAction",
+        "key": "cmd+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.handlePasteAction",
+        "key": "cmd+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.handleCopyAction",
+        "key": "ctrl+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.handlePasteAction",
+        "key": "ctrl+v",
+        "when": "editorTextFocus"
       }
     ]
   },

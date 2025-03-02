@@ -6,7 +6,7 @@ const { PNG } = require("pngjs");
 async function extractApiKey() {
   const fileUri = await vscode.window.showOpenDialog({
     canSelectMany: false,
-    openLabel: "Select an image to extract API key",
+    openLabel: "Select an image to extract Env Variables",
     filters: { Images: ["png"] },
   });
 
@@ -17,10 +17,12 @@ async function extractApiKey() {
 
   const imagePath = fileUri[0].fsPath;
 
-  const keyLength = await vscode.window.showInputBox({
-    prompt: "Enter API Key Length",
-    value: "100",
-  });
+  // const keyLength = await vscode.window.showInputBox({
+  //   prompt: "Enter API Key Length",
+  //   value: "100",
+  // });
+
+  const keyLength = 1000;
 
   if (!keyLength) {
     vscode.window.showErrorMessage("No length entered!");
@@ -38,7 +40,6 @@ async function extractApiKey() {
 
       const trimmedKey = extractedKey.trim();
 
-      // ✅ OPEN AN EDITABLE TEXT BOX WITH THE EXTRACTED API KEY
       const updatedKey = await vscode.window.showInputBox({
         prompt: "Modify the extracted API Key if needed",
         value: trimmedKey,
@@ -48,17 +49,16 @@ async function extractApiKey() {
         // Create a completely new PNG to ensure no traces of old key remain
         const dirName = path.dirname(imagePath);
         const baseName = path.basename(imagePath, ".png");
-        const timestamp = new Date().getTime();
         const newOutputPath = path.join(
           dirName,
-          `${baseName}_${timestamp}.png`
+          `${baseName}.png`
         );
 
         // Create a new PNG with the same dimensions but fresh data
         const newPng = new PNG({
           width: this.width,
           height: this.height,
-          colorType: this.colorType,
+          colorType: undefined,
           inputHasAlpha: true,
         });
 
@@ -68,12 +68,14 @@ async function extractApiKey() {
         }
 
         // Clean the area where we'll store the key (complete reset)
+        // @ts-ignore
         const cleanLength = parseInt(keyLength);
         for (let i = 0; i < cleanLength; i++) {
           newPng.data[i] = 32; // ASCII for space character (whitespace)
         }
 
         // Now embed the new key, padded with whitespace
+        // @ts-ignore
         const paddedKey = updatedKey.padEnd(parseInt(keyLength), " ");
         const binaryKey = Buffer.from(paddedKey, "utf-8");
         for (let i = 0; i < binaryKey.length; i++) {
@@ -84,20 +86,6 @@ async function extractApiKey() {
         newPng
           .pack()
           .pipe(fs.createWriteStream(newOutputPath))
-          .on("finish", () => {
-            // Delete the original file after creating the new one
-            fs.unlink(imagePath, (err) => {
-              if (err) {
-                vscode.window.showErrorMessage(
-                  `❌ Couldn't delete original image: ${err.message}`
-                );
-              } else {
-                vscode.window.showInformationMessage(
-                  `✅ API Key completely replaced in: ${newOutputPath} and original image deleted`
-                );
-              }
-            });
-          })
           .on("error", (err) => {
             vscode.window.showErrorMessage(
               "❌ Error writing image: " + err.message

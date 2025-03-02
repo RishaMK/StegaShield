@@ -2,6 +2,7 @@ const vscode = require("vscode");
 const { hashAll } = require("./hashall.js");
 const { extractApiKey } = require("./extractApiKey");
 const { hideApiKey } = require("./hideApiKey");
+const { copyAction, pasteAction } = require("./anticopy");
 
 /**
  * @param {{ subscriptions: vscode.Disposable[]; }} context
@@ -36,14 +37,24 @@ function activate(context) {
     }
   );
 
+  const copyCommand = vscode.commands.registerCommand('extension.handleCopyAction', async () => {
+    await copyAction();
+  });
+
+  const pasteCommand = vscode.commands.registerCommand('extension.handlePasteAction', async () => {
+    await pasteAction();
+  });
+
   context.subscriptions.push(
     hashAllCommand,
     hideCommand,
     extractCommand,
+    copyCommand,
+    pasteCommand,
     disposable
   );
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = { activate, deactivate };

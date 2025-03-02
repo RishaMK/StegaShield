@@ -5,7 +5,7 @@ const { PNG } = require("pngjs");
 async function hideApiKey() {
   const fileUri = await vscode.window.showOpenDialog({
     canSelectMany: false,
-    openLabel: "Select an image to embed API key",
+    openLabel: "Select an image to embed Env Variables",
     filters: { Images: ["png"] },
   });
 
@@ -17,17 +17,18 @@ async function hideApiKey() {
   const imagePath = fileUri[0].fsPath;
 
   const apiKey = await vscode.window.showInputBox({
-    prompt: "Enter API Key to embed",
-  });
+    prompt: "Enter ENV Variables to embed",
+  })
+
   if (!apiKey) {
-    vscode.window.showErrorMessage("No API Key entered!");
+    vscode.window.showErrorMessage("No Variables Key entered!");
     return;
   }
 
   // Pad the API key with whitespace to reach the standard length
-  const paddedApiKey = apiKey.padEnd(100, " ");
+  const paddedApiKey = apiKey.padEnd(1000, " ");
 
-  const outputPath = imagePath.replace(".png", "_hidden.png");
+  // const outputPath = imagePath.replace(".png", "_hidden.png");
 
   fs.createReadStream(imagePath)
     .pipe(new PNG())
@@ -36,10 +37,10 @@ async function hideApiKey() {
         this.data[i] = paddedApiKey.charCodeAt(i); // Embed padded API Key
       }
       this.pack()
-        .pipe(fs.createWriteStream(outputPath))
+        .pipe(fs.createWriteStream(imagePath))
         .on("finish", () => {
           vscode.window.showInformationMessage(
-            `✅ API Key hidden in: ${outputPath}`
+            `✅ ENV Variables hidden in: ${imagePath}`
           );
         })
         .on("error", (err) => {
