@@ -41,6 +41,7 @@ def put():
         with open("logs.json", "w") as new_logs:
             json.dump(logfile_data, new_logs)
         logger.info(f"Log entry added for user: {username}.")
+        return "OK", 200
     except IOError as e:
         logger.error(f"Failed to write to logs.json: {e}")
         return jsonify(

@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { setHash } = require('./telemetry');
 
 /**
  * @param {fs.PathLike} filePath
@@ -37,14 +38,14 @@ async function hashAll() {
     }
 
     const folderPath = workspaceFolders[0].uri.fsPath;
-    const outputFilePath = path.join(folderPath, 'file_hashes.txt');
+    // const outputFilePath = path.join(folderPath, 'file_hashes.txt');
 
     try {
         let allFiles = await getAllFiles(folderPath);
         let output = '';
 
         for (let filePath of allFiles) {
-            if (filePath === outputFilePath) continue;
+            // if (filePath === outputFilePath) continue;
             let relativePath = path.relative(folderPath, filePath);
             try {
                 let hash = await hashFile(filePath);
@@ -54,8 +55,10 @@ async function hashAll() {
             }
         }
 
-        await fs.promises.writeFile(outputFilePath, output);
-        vscode.window.showInformationMessage('Hashes saved to file_hashes.txt');
+        // await fs.promises.writeFile(outputFilePath, output);
+        await setHash({ hash: output })
+        // vscode.window.showInformationMessage('Hashes saved to file_hashes.txt');
+        vscode.window.showInformationMessage('Build Hashes Generated Successfully!');
     } catch (err) {
         vscode.window.showErrorMessage('Error reading files.');
         console.error(err);

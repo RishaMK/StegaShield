@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 const { checkForSimilarity } = require('./call_similarity');
+const { updateDeveloperLogs } = require('./telemetry');
 
 function embedSpecialData(text) {
     const zeroWidthMap = { '0': '\u200B', '1': '\u200C' }; // ZWSP for 0, ZWNJ for 1
@@ -85,6 +86,7 @@ const pasteAction = async () => {
             if (x) {
                 vscode.window.showInformationMessage('BUDDY, YOU GOT BUSTED BUDDY');
                 //Call Raqeeb log API 
+                updateDeveloperLogs({ username: require('os').userInfo().username, log: `LIKELY VIOLATION: COPIED \`\`\`${COPYCACHE}\`\`\` and PASTED \`\`\`${pastedText}\`\`\` ` })
             }
         } catch (error) {
             vscode.window.showInformationMessage("ERR" + error);
@@ -106,6 +108,7 @@ const pasteAction = async () => {
                 if (z) {
                     vscode.window.showInformationMessage('BUDDY, YOU GOT BUSTED BUDDY');
                     //Call Raqeeb log API 
+                    updateDeveloperLogs({ username: require('os').userInfo().username, log: `LIKELY VIOLATION: COPIED \`\`\`${x}\`\`\` and PASTED \`\`\`${pastedText}\`\`\` ` })
                 }
             } catch (error) {
                 vscode.window.showInformationMessage("ERR" + error);

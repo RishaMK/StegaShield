@@ -1,7 +1,7 @@
 const axios = require('axios');
 const vscode = require('vscode');
 
-const ROOT = "https://localhost:3333";
+const ROOT = "http://localhost:3333";
 
 // ✅ GET Request
 async function getHash() {
@@ -13,11 +13,10 @@ async function getHash() {
     }
 }
 
-async function setHash({ username, log }) {
+async function setHash({ hash }) {
     try {
         const response = await axios.post(`${ROOT}/set-hash`, {
-            username,
-            log,
+            hash,
         });
     } catch (error) {
         vscode.window.showErrorMessage("ERROR: " + error);
