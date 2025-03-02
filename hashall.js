@@ -19,9 +19,14 @@ async function getAllFiles(dirPath) {
     let entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
     let files = await Promise.all(entries.map(async (entry) => {
         let fullPath = path.join(dirPath, entry.name);
+        if (fullPath.includes('node_modules')) return [];
+        if (fullPath.includes('.git')) return [];
+        if (fullPath.includes('venv')) return [];
+        if (fullPath.includes('.env')) return [];
+        if (fullPath.includes('package-lock')) return [];
         return entry.isDirectory() ? await getAllFiles(fullPath) : fullPath;
     }));
-    return files.flat(); 
+    return files.flat();
 }
 
 async function hashAll() {
@@ -39,8 +44,8 @@ async function hashAll() {
         let output = '';
 
         for (let filePath of allFiles) {
-            if (filePath === outputFilePath) continue; 
-            let relativePath = path.relative(folderPath, filePath); 
+            if (filePath === outputFilePath) continue;
+            let relativePath = path.relative(folderPath, filePath);
             try {
                 let hash = await hashFile(filePath);
                 output += `${relativePath}\t${hash}\n`;
