@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const { checkForSimilarity } = require('./call_similarity');
 
 function embedSpecialData(text) {
     const zeroWidthMap = { '0': '\u200B', '1': '\u200C' }; // ZWSP for 0, ZWNJ for 1
@@ -54,12 +55,14 @@ function extractSpecialData(text) {
     return extractedText;
 }
 
+let COPYCACHE = undefined;
 
 
 const copyAction = async () => {
     await vscode.commands.executeCommand('editor.action.clipboardCopyAction');
     await new Promise(resolve => setTimeout(resolve, 50));
     const copiedText = await vscode.env.clipboard.readText();
+    COPYCACHE = copiedText;
     const embedded = embedSpecialData(copiedText);
     await vscode.env.clipboard.writeText(embedded)
         .then(() => { });
@@ -67,19 +70,52 @@ const copyAction = async () => {
 
 
 const pasteAction = async () => {
+    //get the pasted text from clipboard
     let pastedText = await vscode.env.clipboard.readText();
-    let extracted = extractSpecialData(pastedText);
-    if (extracted === "MSFT") {
-        let x = pastedText.replaceAll('\u200B', '').replaceAll('\u200C', '');
-        // vscode.window.showInformationMessage(`x=>${x.length} | ${pastedText.length}`);
-        await vscode.env.clipboard.writeText(x)
-            .then(() => { });
-        vscode.commands.executeCommand('editor.action.clipboardPasteAction'); // Perform actual paste
-        await vscode.env.clipboard.writeText(pastedText)
-            .then(() => { });
-    } else {
+    let originalPaste = pastedText;
+
+    //Extract Special MARKERS
+    let extractedMarkerCode = extractSpecialData(pastedText);
+
+    if (extractedMarkerCode === undefined || extractedMarkerCode !== "MSFT") {
         vscode.window.showInformationMessage('UNAUTHORIZED PASTE BUDDY, NOTED BUDDY');
         vscode.commands.executeCommand('editor.action.clipboardPasteAction');
+        try {
+            const x = await checkForSimilarity(pastedText, COPYCACHE);
+            if (x) {
+                vscode.window.showInformationMessage('BUDDY, YOU GOT BUSTED BUDDY');
+                //Call Raqeeb log API 
+            }
+        } catch (error) {
+            vscode.window.showInformationMessage("ERR" + error);
+        }
+    } else {
+        let x = pastedText.replaceAll('\u200B', '').replaceAll('\u200C', '');
+        await vscode.env.clipboard.writeText(x).then(() => { });
+        setTimeout(async () => {
+            vscode.commands.executeCommand('editor.action.clipboardPasteAction'); // Perform actual paste
+        }, 200);
+        if (x === pastedText) {
+            //no-op
+        } if (x === COPYCACHE) {
+            //no-op
+            vscode.window.showInformationMessage('SAME COPY BUDDY');
+        } else {
+            try {
+                const z = await checkForSimilarity(pastedText, x);
+                if (z) {
+                    vscode.window.showInformationMessage('BUDDY, YOU GOT BUSTED BUDDY');
+                    //Call Raqeeb log API 
+                }
+            } catch (error) {
+                vscode.window.showInformationMessage("ERR" + error);
+            }
+        }
+        setTimeout(async () => {
+            await vscode.env.clipboard.writeText(pastedText)
+                .then(() => { });
+        }, 200);
+
     }
 }
 

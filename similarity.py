@@ -24,9 +24,9 @@ def main():
 
     # Print similarity score
     if (similarity * 100 > 70.0):
-        flag = True
+        flag = 1
     else:
-        flag = False
+        flag = 0
 
     print(flag)
 
