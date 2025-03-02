@@ -1,9 +1,4 @@
 const vscode = require("vscode");
-const {
-  injectSignatures,
-  decryptLogFiles,
-  registerOnSaveCheck,
-} = require("./steganogram");
 const { hashAll } = require("./hashall.js");
 const { extractApiKey } = require("./extractApiKey");
 const { hideApiKey } = require("./hideApiKey");
@@ -12,26 +7,6 @@ const { hideApiKey } = require("./hideApiKey");
  * @param {{ subscriptions: vscode.Disposable[]; }} context
  */
 function activate(context) {
-  let helloWorldCommand = vscode.commands.registerCommand(
-    "extension.helloWorld",
-    () => {
-      vscode.window.showInformationMessage("steganogram extension is Running!");
-    }
-  );
-
-  let injectSignaturesCommand = vscode.commands.registerCommand(
-    "steganogram.injectSignatures",
-    async () => {
-      await injectSignatures();
-    }
-  );
-
-  let decryptLogsCommand = vscode.commands.registerCommand(
-    "steganogram.decryptLogs",
-    async () => {
-      await decryptLogFiles();
-    }
-  );
 
   let hashAllCommand = vscode.commands.registerCommand(
     "steganogram.hashAll",
@@ -61,12 +36,7 @@ function activate(context) {
     }
   );
 
-  registerOnSaveCheck(context);
-
   context.subscriptions.push(
-    helloWorldCommand,
-    injectSignaturesCommand,
-    decryptLogsCommand,
     hashAllCommand,
     hideCommand,
     extractCommand,

@@ -10,9 +10,6 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:steganogram.helloWorld",
-    "onCommand:steganogram.injectSignatures",
-    "onCommand:steganogram.decryptLogs",
     "onCommand:steganogram.hashAll"
   ],
   "main": "/extension.js",
@@ -25,18 +22,6 @@
       {
         "command": "extension.hideApiKey",
         "title": "Hide .env"
-      },
-      {
-        "command": "extension.helloWorld",
-        "title": "steganogram: Hello World"
-      },
-      {
-        "command": "steganogram.injectSignatures",
-        "title": "steganogram: Inject Signatures"
-      },
-      {
-        "command": "steganogram.decryptLogs",
-        "title": "steganogram: Decrypt Logs"
       },
       {
         "command": "steganogram.hashAll",
